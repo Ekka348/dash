@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 Дашборд Звонков</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>📞 Звонки по часам</h2>
+  <canvas id="callChart" width="600" height="300"></canvas>
+
+  <script>
+    async function loadChart() {
+      const res = await fetch("/chart-data");
+      const data = await res.json();
+
+      const ctx = document.getElementById("callChart").getContext("2d");
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: "Успешные исходящие звонки",
+            data: data.values,
+            backgroundColor: "rgba(54, 162, 235, 0.7)"
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    loadChart();
+    setInterval(() => {
+      document.getElementById("callChart").remove();
+      const canvas = document.createElement("canvas");
+      canvas.id = "callChart";
+      canvas.width = 600;
+      canvas.height = 300;
+      document.body.appendChild(canvas);
+      loadChart();
+    }, 30000); // каждые 30 секунд
+  </script>
+</body>
+</html>
